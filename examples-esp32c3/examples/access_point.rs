@@ -7,7 +7,7 @@
 mod examples_util;
 use examples_util::hal;
 
-use embedded_io::blocking::*;
+use embedded_io::*;
 use embedded_svc::ipv4::Interface;
 use embedded_svc::wifi::{AccessPointConfiguration, Configuration, Wifi};
 
@@ -45,7 +45,7 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
     let mut socket_set_entries: [SocketStorage; 3] = Default::default();
     let (iface, device, mut controller, sockets) =
         create_network_interface(&init, wifi, WifiMode::Ap, &mut socket_set_entries).unwrap();

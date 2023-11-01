@@ -49,3 +49,47 @@ ipv6 = ["esp-wifi/ipv6"]
 coex = ["esp-wifi/coex"]
 log = ["esp-wifi/log", "dep:log", "esp-println/log"]
 defmt = ["esp-wifi/defmt", "esp-println/defmt"]
+
+[[example]]
+name = "access_point"
+required-features = ["wifi"]
+
+[[example]]
+name = "async_ble"
+required-features = ["async", "ble"]
+
+[[example]]
+name = "ble"
+required-features = ["ble"]
+
+[[example]]
+name = "coex"
+required-features = ["wifi", "ble", "coex"]
+
+[[example]]
+name = "dhcp"
+required-features = ["wifi"]
+
+[[example]]
+name = "embassy_access_point"
+required-features = ["async", "wifi", "embassy-net"]
+
+[[example]]
+name = "embassy_dhcp"
+required-features = ["async", "wifi", "embassy-net"]
+
+[[example]]
+name = "embassy_esp_now"
+required-features = ["async", "esp-now"]
+
+[[example]]
+name = "embassy_esp_now_duplex"
+required-features = ["async", "esp-now"]
+
+[[example]]
+name = "esp_now"
+required-features = ["esp-now"]
+
+[[example]]
+name = "static_ip"
+required-features = ["wifi"]

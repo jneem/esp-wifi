@@ -42,7 +42,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let mut system = peripherals.SYSTEM.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -55,15 +55,11 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
     let (wifi_interface, controller) =
         esp_wifi::wifi::new_with_mode(&init, wifi, WifiMode::Sta).unwrap();
 
-    let timer_group0 = TimerGroup::new(
-        peripherals.TIMG0,
-        &clocks,
-        &mut system.peripheral_clock_control,
-    );
+    let timer_group0 = TimerGroup::new(peripherals.TIMG0, &clocks);
     embassy::init(&clocks, timer_group0.timer0);
 
     let config = Config::dhcpv4(Default::default());

@@ -18,7 +18,7 @@ use esp_wifi::{
     EspWifiInitFor,
 };
 
-use embedded_io::blocking::*;
+use embedded_io::*;
 use embedded_svc::ipv4::Interface;
 use embedded_svc::wifi::{AccessPointInfo, ClientConfiguration, Configuration, Wifi};
 
@@ -53,7 +53,8 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, bluetooth, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
+    let bluetooth = peripherals.BT;
 
     let mut socket_set_entries: [SocketStorage; 3] = Default::default();
     let (iface, device, mut controller, sockets) =

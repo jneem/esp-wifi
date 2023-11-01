@@ -41,7 +41,7 @@ fn main() -> ! {
 
     let mut debounce_cnt = 500;
 
-    let (_, mut bluetooth, ..) = peripherals.RADIO.split();
+    let mut bluetooth = peripherals.BT;
 
     loop {
         let connector = BleConnector::new(&init, &mut bluetooth);

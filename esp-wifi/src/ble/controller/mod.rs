@@ -1,24 +1,18 @@
-use embedded_io::{
-    blocking::{Read, Write},
-    Error, Io,
-};
+use embedded_io::{Error, Read, Write};
 
-use crate::hal::{
-    peripheral::{Peripheral, PeripheralRef},
-    radio,
-};
+use crate::hal::peripheral::{Peripheral, PeripheralRef};
 use crate::EspWifiInitialization;
 
 use super::{read_hci, read_next, send_hci};
 
 pub struct BleConnector<'d> {
-    _device: PeripheralRef<'d, radio::Bluetooth>,
+    _device: PeripheralRef<'d, crate::hal::peripherals::BT>,
 }
 
 impl<'d> BleConnector<'d> {
     pub fn new(
         init: &EspWifiInitialization,
-        device: impl Peripheral<P = radio::Bluetooth> + 'd,
+        device: impl Peripheral<P = crate::hal::peripherals::BT> + 'd,
     ) -> BleConnector<'d> {
         if !init.is_ble() {
             panic!("Not initialized for BLE use");
@@ -45,7 +39,7 @@ impl Error for BleConnectorError {
     }
 }
 
-impl Io for BleConnector<'_> {
+impl embedded_io::ErrorType for BleConnector<'_> {
     type Error = BleConnectorError;
 }
 
@@ -93,7 +87,6 @@ pub mod asynch {
     use super::{read_hci, send_hci};
     use crate::hal::peripheral::{Peripheral, PeripheralRef};
     use embassy_sync::waitqueue::AtomicWaker;
-    use embedded_io::Io;
 
     static HCI_WAKER: AtomicWaker = AtomicWaker::new();
 
@@ -102,13 +95,13 @@ pub mod asynch {
     }
 
     pub struct BleConnector<'d> {
-        _device: PeripheralRef<'d, crate::hal::radio::Bluetooth>,
+        _device: PeripheralRef<'d, crate::hal::peripherals::BT>,
     }
 
     impl<'d> BleConnector<'d> {
         pub fn new(
             init: &EspWifiInitialization,
-            device: impl Peripheral<P = crate::hal::radio::Bluetooth> + 'd,
+            device: impl Peripheral<P = crate::hal::peripherals::BT> + 'd,
         ) -> BleConnector<'d> {
             if !init.is_ble() {
                 panic!("Not initialized for BLE use");
@@ -120,18 +113,8 @@ pub mod asynch {
         }
     }
 
-    impl Io for BleConnector<'_> {
+    impl embedded_io::ErrorType for BleConnector<'_> {
         type Error = BleConnectorError;
-    }
-
-    impl embedded_io_async::ErrorType for BleConnector<'_> {
-        type Error = BleConnectorError;
-    }
-
-    impl embedded_io_async::Error for BleConnectorError {
-        fn kind(&self) -> embedded_io_async::ErrorKind {
-            embedded_io_async::ErrorKind::Other
-        }
     }
 
     impl embedded_io_async::Read for BleConnector<'_> {
