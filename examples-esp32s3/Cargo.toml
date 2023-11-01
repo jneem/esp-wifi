@@ -13,6 +13,7 @@ embassy-time.workspace = true
 embassy-futures.workspace = true
 futures-util.workspace = true
 embedded-io.workspace = true
+embedded-io-async.workspace = true
 smoltcp.workspace = true
 log = { workspace = true, optional = true }
 heapless.workspace = true

@@ -1381,14 +1381,14 @@ pub(crate) mod embassy {
             caps
         }
 
-        fn ethernet_address(&self) -> [u8; 6] {
+        fn hardware_address(&self) -> embassy_net_driver::HardwareAddress {
             let mut mac = [0; 6];
             match self.get_wifi_mode() {
                 Ok(WifiMode::Ap) => get_ap_mac(&mut mac),
                 Ok(WifiMode::Sta) => get_sta_mac(&mut mac),
                 _ => get_sta_mac(&mut mac),
             }
-            mac
+            embassy_net_driver::HardwareAddress::Ethernet(mac)
         }
     }
 }

@@ -169,7 +169,7 @@ async fn task(stack: &'static Stack<WifiDevice<'static>>) {
         println!("connected!");
         let mut buf = [0; 1024];
         loop {
-            use embedded_io::asynch::Write;
+            use embedded_io_async::Write;
             let r = socket
                 .write_all(b"GET / HTTP/1.0\r\nHost: www.mobile-j.de\r\n\r\n")
                 .await;

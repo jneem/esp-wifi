@@ -93,7 +93,6 @@ pub mod asynch {
     use super::{read_hci, send_hci};
     use crate::hal::peripheral::{Peripheral, PeripheralRef};
     use embassy_sync::waitqueue::AtomicWaker;
-    use embedded_io::asynch;
     use embedded_io::Io;
 
     static HCI_WAKER: AtomicWaker = AtomicWaker::new();
@@ -125,7 +124,17 @@ pub mod asynch {
         type Error = BleConnectorError;
     }
 
-    impl asynch::Read for BleConnector<'_> {
+    impl embedded_io_async::ErrorType for BleConnector<'_> {
+        type Error = BleConnectorError;
+    }
+
+    impl embedded_io_async::Error for BleConnectorError {
+        fn kind(&self) -> embedded_io_async::ErrorKind {
+            embedded_io_async::ErrorKind::Other
+        }
+    }
+
+    impl embedded_io_async::Read for BleConnector<'_> {
         async fn read(&mut self, buf: &mut [u8]) -> Result<usize, BleConnectorError> {
             if !have_hci_read_data() {
                 HciReadyEventFuture.await;
@@ -148,7 +157,7 @@ pub mod asynch {
         }
     }
 
-    impl asynch::Write for BleConnector<'_> {
+    impl embedded_io_async::Write for BleConnector<'_> {
         async fn write(&mut self, buf: &[u8]) -> Result<usize, BleConnectorError> {
             send_hci(buf);
             Ok(buf.len())

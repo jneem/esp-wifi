@@ -6,7 +6,6 @@
 
 use embassy_executor::_export::StaticCell;
 use embassy_net::tcp::TcpSocket;
-use embassy_net::ConfigV4;
 use embassy_net::{
     Config, IpListenEndpoint, Ipv4Address, Ipv4Cidr, Stack, StackResources, StaticConfigV4,
 };
@@ -73,13 +72,11 @@ fn main() -> ! {
     );
     embassy::init(&clocks, timer_group0.timer0);
 
-    let config = Config {
-        ipv4: ConfigV4::Static(StaticConfigV4 {
-            address: Ipv4Cidr::new(Ipv4Address::new(192, 168, 2, 1), 24),
-            gateway: Some(Ipv4Address::from_bytes(&[192, 168, 2, 1])),
-            dns_servers: Default::default(),
-        }),
-    };
+    let config = Config::static_ipv4(StaticConfigV4 {
+        address: Ipv4Cidr::new(Ipv4Address::new(192, 168, 2, 1), 24),
+        gateway: Some(Ipv4Address::from_bytes(&[192, 168, 2, 1])),
+        dns_servers: Default::default(),
+    });
 
     let seed = 1234; // very random, very secure seed
 
@@ -161,7 +158,7 @@ async fn task(stack: &'static Stack<WifiDevice<'static>>) {
             continue;
         }
 
-        use embedded_io::asynch::Write;
+        use embedded_io_async::Write;
 
         let mut buffer = [0u8; 1024];
         let mut pos = 0;
