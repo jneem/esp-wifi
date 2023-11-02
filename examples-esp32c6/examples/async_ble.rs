@@ -27,12 +27,12 @@ mod examples_util;
 use examples_util::hal;
 use examples_util::BootButton;
 use hal::{
-    clock::ClockControl, embassy, peripherals::*, prelude::*, radio::Bluetooth,
-    systimer::SystemTimer, timer::TimerGroup, Rng, IO,
+    clock::ClockControl, embassy, peripherals::*, prelude::*, systimer::SystemTimer,
+    timer::TimerGroup, Rng, IO,
 };
 
 #[embassy_executor::task]
-async fn run(init: EspWifiInitialization, mut bluetooth: Bluetooth, pin: BootButton) {
+async fn run(init: EspWifiInitialization, mut bluetooth: BT, pin: BootButton) {
     let connector = BleConnector::new(&init, &mut bluetooth);
     let mut ble = Ble::new(connector, esp_wifi::current_millis);
     println!("Connector created");
@@ -131,7 +131,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let mut system = peripherals.PCR.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -154,13 +154,9 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (_, bluetooth, ..) = peripherals.RADIO.split();
+    let bluetooth = peripherals.BT;
 
-    let timer_group0 = TimerGroup::new(
-        peripherals.TIMG0,
-        &clocks,
-        &mut system.peripheral_clock_control,
-    );
+    let timer_group0 = TimerGroup::new(peripherals.TIMG0, &clocks);
     embassy::init(&clocks, timer_group0.timer0);
     let executor = EXECUTOR.init(Executor::new());
     executor.run(|spawner| {

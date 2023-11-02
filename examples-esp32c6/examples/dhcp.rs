@@ -5,7 +5,7 @@
 mod examples_util;
 use examples_util::hal;
 
-use embedded_io::blocking::*;
+use embedded_io::*;
 use embedded_svc::ipv4::Interface;
 use embedded_svc::wifi::{AccessPointInfo, ClientConfiguration, Configuration, Wifi};
 
@@ -33,7 +33,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let system = peripherals.PCR.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -46,7 +46,7 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
     let mut socket_set_entries: [SocketStorage; 3] = Default::default();
     let (iface, device, mut controller, sockets) =
         create_network_interface(&init, wifi, WifiMode::Sta, &mut socket_set_entries).unwrap();

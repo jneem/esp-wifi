@@ -23,7 +23,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let system = peripherals.PCR.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -41,7 +41,7 @@ fn main() -> ! {
 
     let mut debounce_cnt = 500;
 
-    let (_, mut bluetooth, ..) = peripherals.RADIO.split();
+    let mut bluetooth = peripherals.BT;
 
     loop {
         let connector = BleConnector::new(&init, &mut bluetooth);

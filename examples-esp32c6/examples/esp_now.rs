@@ -20,7 +20,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let system = peripherals.PCR.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -33,7 +33,7 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
     let mut esp_now = esp_wifi::esp_now::EspNow::new(&init, wifi).unwrap();
 
     println!("esp-now version {}", esp_now.get_version().unwrap());

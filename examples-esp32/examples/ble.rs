@@ -23,15 +23,10 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let mut system = peripherals.DPORT.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
-    let timer = esp32_hal::timer::TimerGroup::new(
-        peripherals.TIMG1,
-        &clocks,
-        &mut system.peripheral_clock_control,
-    )
-    .timer0;
+    let timer = esp32_hal::timer::TimerGroup::new(peripherals.TIMG1, &clocks).timer0;
     let init = initialize(
         EspWifiInitFor::Ble,
         timer,
@@ -46,7 +41,7 @@ fn main() -> ! {
 
     let mut debounce_cnt = 500;
 
-    let (_, mut bluetooth, ..) = peripherals.RADIO.split();
+    let mut bluetooth = peripherals.BT;
 
     loop {
         let connector = BleConnector::new(&init, &mut bluetooth);

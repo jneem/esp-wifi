@@ -47,7 +47,7 @@ async fn run(mut esp_now: EspNow<'static>) {
             Either::First(_) => {
                 println!("Send");
                 let status = esp_now.send_async(&BROADCAST_ADDRESS, b"0123456789").await;
-                println!("Send broadcast status: {:?}", status)
+                println!("Send broadcast status: {:?}", status);
             }
             Either::Second(_) => (),
         }
@@ -63,7 +63,7 @@ fn main() -> ! {
 
     let peripherals = Peripherals::take();
 
-    let mut system = peripherals.SYSTEM.split();
+    let system = peripherals.SYSTEM.split();
     let clocks = ClockControl::max(system.clock_control).freeze();
 
     let timer = SystemTimer::new(peripherals.SYSTIMER).alarm0;
@@ -76,15 +76,11 @@ fn main() -> ! {
     )
     .unwrap();
 
-    let (wifi, ..) = peripherals.RADIO.split();
+    let wifi = peripherals.WIFI;
     let esp_now = esp_wifi::esp_now::EspNow::new(&init, wifi).unwrap();
     println!("esp-now version {}", esp_now.get_version().unwrap());
 
-    let timer_group0 = TimerGroup::new(
-        peripherals.TIMG0,
-        &clocks,
-        &mut system.peripheral_clock_control,
-    );
+    let timer_group0 = TimerGroup::new(peripherals.TIMG0, &clocks);
     embassy::init(&clocks, timer_group0.timer0);
     let executor = EXECUTOR.init(Executor::new());
     executor.run(|spawner| {

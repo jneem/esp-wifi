@@ -7,7 +7,7 @@
 mod examples_util;
 use examples_util::hal;
 
-use embedded_io::*;
+use embedded_io::{Read, Write};
 use embedded_svc::ipv4::Interface;
 use embedded_svc::wifi::{AccessPointConfiguration, Configuration, Wifi};
 
